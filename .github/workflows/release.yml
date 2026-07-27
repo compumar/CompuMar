@@ -41,6 +41,19 @@ jobs:
           libboost-program-options-dev \
           libboost-locale-dev
 
+    - name: Fix/Link CryptonightR_JIT.c
+      run: |
+        if [ ! -f src/crypto/CryptonightR_JIT.c ]; then
+          echo "Buscando CryptonightR_JIT.c en submódulos..."
+          TARGET=$(find external -name "CryptonightR_JIT.c" | head -n 1)
+          if [ -n "$TARGET" ]; then
+            echo "Encontrado en: $TARGET. Creando enlace simbólico..."
+            ln -sf ../../$TARGET src/crypto/CryptonightR_JIT.c
+          else
+            echo "Advertencia: No se encontró el archivo en external/"
+          fi
+        fi
+
     - name: Build core
       run: |
         mkdir build
