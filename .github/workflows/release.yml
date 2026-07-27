@@ -6,7 +6,7 @@ on:
       - 'v*'
 
 jobs:
-  build:
+  build-linux:
     runs-on: ubuntu-latest
 
     steps:
@@ -41,7 +41,7 @@ jobs:
           libboost-program-options-dev \
           libboost-locale-dev
 
-    - name: Build project
+    - name: Build core
       run: |
         mkdir build
         cd build
@@ -50,11 +50,11 @@ jobs:
 
     - name: Package binaries
       run: |
-        mkdir -p release_package
-        find build/src -maxdepth 1 -type f -executable -exec cp {} release_package/ \;
-        tar -czvf compumar-core-linux-x64.tar.gz -C release_package .
+        mkdir -p release_pkg
+        find build/src -maxdepth 1 -type f -executable -exec cp {} release_pkg/ \;
+        tar -czvf compumar-core-linux-x64.tar.gz -C release_pkg .
 
-    - name: Upload Release Asset
+    - name: Upload Release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
