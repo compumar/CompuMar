@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-linux:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout repository
@@ -15,11 +15,12 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Install dependencies
+    - name: Install dependencies and GCC 10
       run: |
         sudo apt-get update
         sudo apt-get install -y \
           build-essential \
+          gcc-10 g++-10 \
           cmake \
           pkg-config \
           libssl-dev \
@@ -43,29 +44,24 @@ jobs:
 
     - name: Fix Linux Case Sensitivity
       run: |
-        echo "Corrigiendo diferencias de mayúsculas/minúsculas entre Windows y Linux..."
         FILE_PATH=$(find . -type f -iname "cryptonightr_jit.c" | head -n 1)
         if [ -n "$FILE_PATH" ]; then
-          echo "Archivo encontrado en: $FILE_PATH"
           cp "$FILE_PATH" src/crypto/CryptonightR_JIT.c
         else
-          echo "Creando archivo temporal..."
           mkdir -p src/crypto
           touch src/crypto/CryptonightR_JIT.c
         fi
-
-    - name: Fix GCC 13+ missing includes
-      run: |
-        echo "Inyectando dependencias faltantes para compatibilidad con GCC 13..."
-        sed -i '1i #include <deque>' src/common/threadpool.h
-        sed -i '1i #include <deque>' src/common/dns_utils.cpp
-        sed -i '1i #include <boost/mpl/contains.hpp>' contrib/epee/include/serialization/keyvalue_serialization_overloads.h
 
     - name: Build core
       run: |
         mkdir -p build
         cd build
-        cmake -D CMAKE_BUILD_TYPE=Release ..
+        cmake \
+          -D CMAKE_BUILD_TYPE=Release \
+          -D CMAKE_C_COMPILER=gcc-10 \
+          -D CMAKE_CXX_COMPILER=g++-10 \
+          -D CMAKE_CXX_FLAGS="-Wno-error -Wno-deprecated-declarations" \
+          ..
         make -j$(nproc)
 
     - name: Package binaries
