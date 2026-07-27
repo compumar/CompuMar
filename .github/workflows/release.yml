@@ -7,18 +7,25 @@ on:
 
 jobs:
   build-linux:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
+    container: ubuntu:20.04 
 
     steps:
+    - name: Pre-install Git (Required for Checkout)
+      run: |
+        apt-get update
+        apt-get install -y git ca-certificates
+
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
         submodules: recursive
 
     - name: Install dependencies
+      env:
+        DEBIAN_FRONTEND: noninteractive
       run: |
-        sudo apt-get update
-        sudo apt-get install -y \
+        apt-get install -y \
           build-essential \
           cmake \
           pkg-config \
@@ -31,9 +38,11 @@ jobs:
           libreadline-dev \
           libhidapi-dev \
           libusb-1.0-0-dev \
-          libboost-all-dev
+          libboost-all-dev \
+          tar \
+          tzdata
 
-    - name: Fix Linux Case Sensitivity (Windows to Linux)
+    - name: Fix Linux Case Sensitivity
       run: |
         FILE_PATH=$(find . -type f -iname "cryptonightr_jit.c" | head -n 1)
         if [ -n "$FILE_PATH" ]; then
