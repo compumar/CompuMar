@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-linux:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
 
     steps:
     - name: Checkout repository
@@ -15,12 +15,11 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Install dependencies and GCC 10
+    - name: Install dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y \
           build-essential \
-          gcc-10 g++-10 \
           cmake \
           pkg-config \
           libssl-dev \
@@ -32,21 +31,13 @@ jobs:
           libreadline-dev \
           libhidapi-dev \
           libusb-1.0-0-dev \
-          libboost-system-dev \
-          libboost-filesystem-dev \
-          libboost-thread-dev \
-          libboost-date-time-dev \
-          libboost-chrono-dev \
-          libboost-regex-dev \
-          libboost-serialization-dev \
-          libboost-program-options-dev \
-          libboost-locale-dev
+          libboost-all-dev
 
-    - name: Fix Linux Case Sensitivity
+    - name: Fix Linux Case Sensitivity (Windows to Linux)
       run: |
         FILE_PATH=$(find . -type f -iname "cryptonightr_jit.c" | head -n 1)
         if [ -n "$FILE_PATH" ]; then
-          cp "$FILE_PATH" src/crypto/CryptonightR_JIT.c
+          cp "$FILE_PATH" src/crypto/CryptonightR_JIT.c || true
         else
           mkdir -p src/crypto
           touch src/crypto/CryptonightR_JIT.c
@@ -56,12 +47,7 @@ jobs:
       run: |
         mkdir -p build
         cd build
-        cmake \
-          -D CMAKE_BUILD_TYPE=Release \
-          -D CMAKE_C_COMPILER=gcc-10 \
-          -D CMAKE_CXX_COMPILER=g++-10 \
-          -D CMAKE_CXX_FLAGS="-Wno-error -Wno-deprecated-declarations" \
-          ..
+        cmake -D CMAKE_BUILD_TYPE=Release ..
         make -j$(nproc)
 
     - name: Package binaries
