@@ -31,6 +31,16 @@
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "blockchain.hardforks"
 
+// ============================================================================
+// ARCHITECTURAL DESIGN DECISION: PERMANENT v7 CONSENSUS ANCHOR
+// ============================================================================
+// CompuMar operates permanently on v7 consensus rules (CryptoNight v1) for 
+// low-power web/CPU mining. RandomX and later versions are intentionally 
+// inactive. Subsequent hard fork entries (v8 to v15) are preserved statically 
+// for structural compatibility and ecosystem compile-time dependencies.
+// See DESIGN.md in the root directory for full details.
+// ============================================================================
+
 const hardfork_t mainnet_hard_forks[] = {
   { 7,  1, 0, 1519605000 },
   { 8,  1, 0, 1519605001 },
