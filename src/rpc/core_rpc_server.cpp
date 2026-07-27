@@ -1291,8 +1291,8 @@ namespace cryptonote
       case 0: res.pow_algorithm = "Cryptonight"; break;
       case 1: res.pow_algorithm = "CNv1 (Cryptonight variant 1)"; break;
       case 2: case 3: res.pow_algorithm = "CNv2 (Cryptonight variant 2)"; break;
-      case 4: case 5: res.pow_algorithm = "CN/WOW"; break;
-      case 6: res.pow_algorithm = "RandomWOW"; break;
+      case 4: case 5: res.pow_algorithm = "CN/MAR"; break;
+      case 6: res.pow_algorithm = "RandomMAR"; break;
       case 7: res.pow_algorithm = "SHA-3"; break;
       default: res.pow_algorithm = "I'm not sure actually"; break;
     }

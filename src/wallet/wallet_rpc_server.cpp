@@ -3143,6 +3143,7 @@ namespace tools
       delete m_wallet;
     }
     m_wallet = wal.release();
+    m_wallet->set_offline(false);
     return true;
   }
   //------------------------------------------------------------------------------------------------------------------------------
@@ -3214,6 +3215,7 @@ namespace tools
     if (m_wallet)
       delete m_wallet;
     m_wallet = wal.release();
+    m_wallet->set_offline(false);
     return true;
   }
   //------------------------------------------------------------------------------------------------------------------------------
@@ -3512,6 +3514,7 @@ namespace tools
     if (m_wallet)
       delete m_wallet;
     m_wallet = wal.release();
+    m_wallet->set_offline(false);
     res.address = m_wallet->get_account().get_public_address_str(m_wallet->nettype());
     return true;
   }
@@ -3700,6 +3703,7 @@ namespace tools
     if (m_wallet)
       delete m_wallet;
     m_wallet = wal.release();
+    m_wallet->set_offline(false);
     res.address = m_wallet->get_account().get_public_address_str(m_wallet->nettype());
     res.info = "Wallet has been restored successfully.";
     return true;
@@ -4428,7 +4432,7 @@ public:
       "    ,-|`.            _,'/       )    ) ,' ,'   \n"
       "   (  :`.`-..____..=:.-':     .     _,' ,'     \n"
       "    `,'| ``--....-)='    `._,  |  ,') _ '``._  \n"
-      " _.-/ _ `.   (WOW)        /     )' ; / | |`-.' \n"
+      " _.-/ _ `.   (MAR)        /     )' ; / | |`-.' \n"
       "`--(   `-:`.     `' ___..'  _,-'   |/   `.)    \n"
       "    `-. `.`.``-----``--,  .'                   \n"
       "      |/`.|`'        ,',');                    \n"
@@ -4436,7 +4440,7 @@ public:
       "\n \n" << ENDL);
     MGINFO_YELLOW(ENDL << "**********************************************************************" << ENDL
       << "Caution: Wownero is highly experimental software compiled by a ragtag team of stoners with as much" << ENDL
-      << "skill as Verge developers. Storing your life savings in WOW is probably not a good idea." << ENDL
+      << "skill as Verge developers. Storing your life savings in MAR is probably not a good idea." << ENDL
       << "**********************************************************************" << ENDL);
     try
     {
