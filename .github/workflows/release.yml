@@ -48,16 +48,6 @@ jobs:
           tar \
           tzdata
 
-    - name: Fix Linux Case Sensitivity
-      run: |
-        FILE_PATH=$(find . -type f -iname "cryptonightr_jit.c" | head -n 1)
-        if [ -n "$FILE_PATH" ]; then
-          cp "$FILE_PATH" src/crypto/CryptonightR_JIT.c || true
-        else
-          mkdir -p src/crypto
-          touch src/crypto/CryptonightR_JIT.c
-        fi
-
     - name: Build core
       run: |
         mkdir -p build
@@ -68,7 +58,7 @@ jobs:
     - name: Package binaries
       run: |
         mkdir -p release_pkg
-        find build/src -maxdepth 1 -type f -executable -exec cp {} release_pkg/ \;
+        find build -type f -executable -not -path "*/CMakeFiles/*" -exec cp {} release_pkg/ \;
         tar -czvf compumar-core-linux-x64.tar.gz -C release_pkg .
 
     - name: Upload Release
