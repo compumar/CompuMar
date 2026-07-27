@@ -48,7 +48,6 @@ set(crypto_sources
   skein.c
   slow-hash.c
   rx-slow-hash.c
-  CryptonightR_JIT.c
   tree-hash.c)
 
 if(ARCH_ID STREQUAL "i386" OR ARCH_ID STREQUAL "x86_64" OR ARCH_ID STREQUAL "x86-64" OR ARCH_ID STREQUAL "amd64")
@@ -78,7 +77,6 @@ set(crypto_private_headers
   random.h
   skein.h
   skein_port.h
-  CryptonightR_JIT.h
   CryptonightR_template.h)
 
 monero_private_headers(cncrypto
