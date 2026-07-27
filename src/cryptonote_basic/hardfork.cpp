@@ -33,6 +33,16 @@
 #include "blockchain_db/blockchain_db.h"
 #include "hardfork.h"
 
+// ============================================================================
+// ARCHITECTURAL DESIGN DECISION: PERMANENT v7 CONSENSUS VALIDATION
+// ============================================================================
+// The hard fork evaluation engine enforces a strict cap at version 7. 
+// Although higher version entries exist in the data tables for structural 
+// compatibility, the validation logic restricts protocol upgrades, ensuring 
+// CompuMar remains permanently anchored to CryptoNight v1 web/CPU mining rules.
+// ============================================================================
+
+
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "hardfork"
 
