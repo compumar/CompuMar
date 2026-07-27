@@ -49,10 +49,16 @@ jobs:
           echo "Archivo encontrado en: $FILE_PATH"
           cp "$FILE_PATH" src/crypto/CryptonightR_JIT.c
         else
-          echo "Creando archivo temporal para que CMake avance..."
+          echo "Creando archivo temporal..."
           mkdir -p src/crypto
           touch src/crypto/CryptonightR_JIT.c
         fi
+
+    - name: Fix GCC 13+ missing includes
+      run: |
+        echo "Inyectando #include <deque> para compatibilidad con GCC 13..."
+        sed -i '1i #include <deque>' src/common/threadpool.h
+        sed -i '1i #include <deque>' src/common/dns_utils.cpp
 
     - name: Build core
       run: |
