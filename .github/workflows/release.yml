@@ -56,9 +56,10 @@ jobs:
 
     - name: Fix GCC 13+ missing includes
       run: |
-        echo "Inyectando #include <deque> para compatibilidad con GCC 13..."
+        echo "Inyectando dependencias faltantes para compatibilidad con GCC 13..."
         sed -i '1i #include <deque>' src/common/threadpool.h
         sed -i '1i #include <deque>' src/common/dns_utils.cpp
+        sed -i '1i #include <boost/mpl/contains.hpp>' contrib/epee/include/serialization/keyvalue_serialization_overloads.h
 
     - name: Build core
       run: |
