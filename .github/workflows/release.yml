@@ -6,85 +6,58 @@ on:
       - 'v*'
 
 jobs:
-  build-linux:
-    name: Build for Linux (x86_64)
-    runs-on: ubuntu-22.04
-    
+  build:
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            build-essential \
-            cmake \
-            pkg-config \
-            libssl-dev \
-            libzmq3-dev \
-            libunbound-dev \
-            libsodium-dev \
-            libunwind8-dev \
-            liblzma-dev \
-            libreadline-dev \
-            libexpat1-dev \
-            gnutls-dev \
-            git
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          cmake \
+          pkg-config \
+          libssl-dev \
+          libzmq3-dev \
+          libunbound-dev \
+          libsodium-dev \
+          libunwind8-dev \
+          liblzma-dev \
+          libreadline-dev \
+          libhidapi-dev \
+          libusb-1.0-0-dev \
+          libboost-system-dev \
+          libboost-filesystem-dev \
+          libboost-thread-dev \
+          libboost-date-time-dev \
+          libboost-chrono-dev \
+          libboost-regex-dev \
+          libboost-serialization-dev \
+          libboost-program-options-dev \
+          libboost-locale-dev
 
-      - name: Build Release
-        run: |
-          mkdir build && cd build
-          cmake -DCMAKE_BUILD_TYPE=Release ..
-          make -j$(nproc)
+    - name: Build project
+      run: |
+        mkdir build
+        cd build
+        cmake -D CMAKE_BUILD_TYPE=Release ..
+        make -j$(nproc)
 
-      - name: Package binaries
-        run: |
-          mkdir -p package/compumar-core
-          cp build/src/compumard package/compumar-core/
-          cp build/src/compumar-wallet-cli package/compumar-core/
-          cp build/src/compumar-wallet-rpc package/compumar-core/
-          cd package
-          tar -czvf compumar-core-linux-x64.tar.gz compumar-core
+    - name: Package binaries
+      run: |
+        mkdir -p release_package
+        find build/src -maxdepth 1 -type f -executable -exec cp {} release_package/ \;
+        tar -czvf compumar-core-linux-x64.tar.gz -C release_package .
 
-      - name: Upload Linux Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: compumar-core-linux-x64
-          path: package/compumar-core-linux-x64.tar.gz
-
-  publish-release:
-    needs: build-linux
-    name: Publish GitHub Release
-    runs-on: ubuntu-22.04
-    permissions:
-      contents: write
-      
-    steps:
-      - name: Download all workflow artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-
-      - name: Display structure of downloaded files
-        run: ls -R artifacts
-
-      - name: Create Release and Upload Assets
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            artifacts/compumar-core-linux-x64/compumar-core-linux-x64.tar.gz
-          body: |
-            ## CompuMar Core Official Release
-            Sovereign permanent v7 consensus anchor (CryptoNight v1).
-            
-            ### Included Binaries:
-            - `compumard` (Daemon)
-            - `compumar-wallet-cli` (Command Line Wallet)
-            - `compumar-wallet-rpc` (RPC Wallet Service)
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload Release Asset
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: compumar-core-linux-x64.tar.gz
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
